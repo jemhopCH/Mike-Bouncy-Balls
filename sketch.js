@@ -4,11 +4,21 @@ let spring = 0.7;
 let gravity = 0.00;
 let friction = -0.9;
 let balls = [];
+let soundOn = false;
+function preload()
+{
+  bounce = loadSound("bounce.wav")
+  
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+
   //makes the number of balls relative to the size of the screen
-  numBalls = (windowWidth+windowHeight)/45;
+  button = createButton("Sound Toggle");
+  button.position(19, 19);
+  button.mousePressed(toggleSound);
+  numBalls = (width+height)/65;
   print(numBalls)
   for (let i = 0; i < numBalls; i++) {
     balls[i] = new Ball(
@@ -21,7 +31,14 @@ function setup() {
   }
   strokeWeight(1);
   fill(255, 204);
+  bounce.setVolume(0.01)
+  
 }
+function toggleSound()
+  {
+    soundOn = !soundOn
+  }
+    
 
 function draw() {
   background(255,180,200);
@@ -30,6 +47,7 @@ function draw() {
     ball.move();
     ball.display();
   });
+  
 }
 
 class Ball {
@@ -51,6 +69,7 @@ class Ball {
       let minDist = this.others[i].diameter / 2 + this.diameter / 2;
 
       if (distance < minDist) {
+        let hasPlayed = false;
         let angle = atan2(dy, dx);
         let targetX = this.x + cos(angle) * minDist;
         let targetY = this.y + sin(angle) * minDist;
@@ -60,6 +79,11 @@ class Ball {
         this.vy -= ay;
         this.others[i].vx += ax;
         this.others[i].vy += ay;
+        if (soundOn && hasPlayed == false)
+        {
+          bounce.play();
+        }
+        
       }
     }
   }
